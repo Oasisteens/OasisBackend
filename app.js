@@ -86,7 +86,7 @@ app.post("/uploadComment", uploadmiddleware, async function (req, res) {
     anonymous = true;
   }
   const outputFolderPath = path.join(process.cwd(), "/public/");
-  const outputFolderPath1 = path.join(process.cwd(), "/app/public/uploads/");
+  const outputFolderPath1 = path.join(process.cwd(), "/uploads/");
   const comment = new Comment({
     postId: req.body.postId,
     content: req.body.content,
@@ -134,7 +134,7 @@ app.post("/uploadTopic", uploadmiddleware, async function (req, res) {
     postAnonymous = true;
   }
   const outputFolderPath = path.join(process.cwd(), "/public/");
-  const outputFolderPath1 = path.join(process.cwd(), "/app/public/uploads/");
+  const outputFolderPath1 = path.join(process.cwd(), "/uploads/");
   let topic;
 
   if (
