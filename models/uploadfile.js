@@ -5,7 +5,7 @@ var fileCount = 0; // Initialize a variable to keep track of the file count
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(process.cwd(), "/app/public/uploads/")); // Set the destination folder for uploaded files
+    cb(null, path.join(process.cwd(), "/uploads/")); // Set the destination folder for uploaded files
   },
   filename: function (req, file, cb) {
     const fileExtension = file.originalname.split(".").pop().toLowerCase();

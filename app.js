@@ -12,7 +12,6 @@ const uploadmiddleware = uploadutils.middleware;
 const imageCompressor = require("./models/compression");
 const MainTopic = require("./models/mainTopic");
 const SubTopic = require("./models/subTopic");
-// TEST
 dotenv.config();
 
 const app = express();
@@ -40,7 +39,7 @@ app.post("/upload", uploadmiddleware, async function (req, res) {
     postAnonymous = true;
   }
   const outputFolderPath = path.join(process.cwd(), "/public/");
-  const outputFolderPath1 = path.join(process.cwd(), "/app/public/uploads/");
+  const outputFolderPath1 = path.join(process.cwd(), "/uploads/");
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
