@@ -12,7 +12,7 @@ const uploadmiddleware = uploadutils.middleware;
 const imageCompressor = require("./models/compression");
 const MainTopic = require("./models/mainTopic");
 const SubTopic = require("./models/subTopic");
-
+// TEST
 dotenv.config();
 
 const app = express();
