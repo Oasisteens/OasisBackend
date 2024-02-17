@@ -25,6 +25,6 @@ const likeSchema = new Schema({
   postingtime: {
     type: String,
   },
-});
+}, { versionKey: '__v' });
 
 module.exports = mongoose.models.Like || mongoose.model("Like", likeSchema);
