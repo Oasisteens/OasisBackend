@@ -11,6 +11,7 @@ const likestatusSchema = new Schema({
   },
   status: {
     type: Boolean,
+    default: false,
   },
   category: {
     type: String,
@@ -25,7 +26,7 @@ const likestatusSchema = new Schema({
         .replace("Z", ""),
     immutable: true,
   },
-});
+}, { versionKey: '__v' });
 
 const Likestatus =
   mongoose.models.Likestatus || mongoose.model("Likestatus", likestatusSchema);
