@@ -21,10 +21,11 @@ const likeSchema = new Schema({
       validator: Number.isInteger,
       message: "{VALUE} is not an integer value",
     },
+    set: val => val < 0 ? 0 : val,
   },
   postingtime: {
     type: String,
-  },
-}, { versionKey: '__v' });
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.models.Like || mongoose.model("Like", likeSchema);
