@@ -12,6 +12,7 @@ const uploadmiddleware = uploadutils.middleware;
 const imageCompressor = require("./models/compression");
 const MainTopic = require("./models/mainTopic");
 const SubTopic = require("./models/subTopic");
+const compression = require('compression');
 dotenv.config();
 
 const app = express();
@@ -19,6 +20,13 @@ const app = express();
 app.use(cors());
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
+
+app.use(compression());
+
+app.use(function (err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running at Port ${process.env.PORT}`);
