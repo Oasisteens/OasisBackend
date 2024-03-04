@@ -5,27 +5,29 @@ const Post = require("./models/post");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
+const User = require("./models/user");
+const bcrypt = require("bcryptjs");
+const multer = require("multer");
 const Like = require("./models/like");
 const Comment = require("./models/comment");
 const uploadmiddleware = uploadutils.middleware;
 const imageCompressor = require("./models/compression");
 const MainTopic = require("./models/mainTopic");
 const SubTopic = require("./models/subTopic");
-const compression = require('compression');
+const compression = require("compression");
 dotenv.config();
 
 const app = express();
 
 app.use(cors());
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(compression());
 
 app.use(function (err, req, res, next) {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send("Something broke!");
 });
 
 app.listen(process.env.PORT, () => {
@@ -40,6 +42,43 @@ mongoose
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
   });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname +
+        "-" +
+        req.body.username +
+        path.extname(file.originalname),
+    );
+  },
+});
+
+const upload = multer({ storage });
+
+app.post("/avatarUpload", upload.single("avatar"), async (req, res) => {
+  try {
+    const { username } = req.body;
+    await User.findOne({ username: username }).then((user) => {
+      if (user) {
+        user.image = req.file.filename;
+        user.save();
+        res
+          .status(201)
+          .json({ avatarUrl: user.image, message: "User Avatar Uploaded" });
+      } else{
+        res.status(404).json({ error: "User not found" });
+      }
+    });
+  } catch (error) {
+    console.error("Error uploading avatar", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.post("/upload", uploadmiddleware, async function (req, res) {
   const fileNumbers = req.files ? req.files.length : 0;
@@ -201,5 +240,3 @@ app.post("/uploadTopic", uploadmiddleware, async function (req, res) {
   console.log("Topic saved");
   res.status(201).send("Topic saved");
 });
-
-// test
