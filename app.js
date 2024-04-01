@@ -70,7 +70,7 @@ app.post("/avatarUpload", upload.single("avatar"), async (req, res) => {
         res
           .status(201)
           .json({ avatarUrl: user.image, message: "User Avatar Uploaded" });
-      } else{
+      } else {
         res.status(404).json({ error: "User not found" });
       }
     });
