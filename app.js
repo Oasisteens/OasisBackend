@@ -15,6 +15,7 @@ const imageCompressor = require("./models/compression");
 const MainTopic = require("./models/mainTopic");
 const SubTopic = require("./models/subTopic");
 const compression = require("compression");
+const rateLimit = require("express-rate-limit");
 dotenv.config();
 
 const app = express();
@@ -24,6 +25,20 @@ app.use(cors());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(compression());
+
+// Define a rate limit rule
+const limiter = rateLimit({
+  windowMs: 30 * 1000, // 1 minute
+  max: 1, // limit each IP to 1 requests per windowMs
+  message: "You can only make 1 request per minute. Please try again later."
+});
+
+// Apply the rate limit rule to a specific route
+const routes = ["/avatarUpload", "/uploadComment", "/uploadTopic"];
+
+routes.forEach(route => {
+  app.use(route, limiter);
+});
 
 app.use(function (err, req, res, next) {
   console.error(err.stack);
