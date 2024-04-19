@@ -12,7 +12,7 @@ const tokenSchema = new Schema({
     },
     createdAt: { 
         type: Date, 
-        expires: 60, // This token will expire in 1 hour
+        expires: 600, // This token will expire in 1 hour
         default: Date.now 
     }
 })
