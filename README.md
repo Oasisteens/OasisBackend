@@ -16,7 +16,7 @@ OasisBackend is responsible for processing requests from the frontend, including
 
 To run this project locally, follow these steps:
 
-1. Clone the repository: `git clone [https://github.com/username/OasisBackend.git](https://github.com/Oasisteens/OasisBackend)`
+1. Clone the repository: `git clone https://github.com/Oasisteens/OasisBackend`
 2. Navigate into the project directory: `cd OasisBackend`
 3. Install the dependencies: `npm install`
 4. Start the development server: `npm start`
