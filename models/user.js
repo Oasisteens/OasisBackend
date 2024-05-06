@@ -7,6 +7,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    validate: {
+      validator: function(v) {
+        return /^[^\W_]+$/.test(v);
+      },
+      message: props => `${props.value} contains special characters`
+    },
   },
   originalPassword: {
     type: String,
