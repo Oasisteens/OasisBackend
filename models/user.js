@@ -8,10 +8,10 @@ const userSchema = new Schema({
     required: true,
     unique: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[^\W_]+$/.test(v);
       },
-      message: props => `${props.value} contains special characters`
+      message: (props) => `${props.value} contains special characters`,
     },
   },
   originalPassword: {

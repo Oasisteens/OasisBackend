@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
 const User = require("./models/user");
-const bcrypt = require("bcryptjs");
+const crypto = require('crypto');
 const multer = require("multer");
 const Like = require("./models/like");
 const Comment = require("./models/comment");
@@ -16,6 +16,7 @@ const MainTopic = require("./models/mainTopic");
 const SubTopic = require("./models/subTopic");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
+const fs = require("fs");
 dotenv.config();
 
 const app = express();
@@ -30,13 +31,13 @@ app.use(compression());
 const limiter = rateLimit({
   windowMs: 30 * 1000, // 1 minute
   max: 1, // limit each IP to 1 requests per windowMs
-  message: "You can only make 1 request per minute. Please try again later."
+  message: "You can only make 1 request per minute. Please try again later.",
 });
 
 // Apply the rate limit rule to a specific route
 const routes = ["/avatarUpload", "/uploadComment", "/uploadTopic"];
 
-routes.forEach(route => {
+routes.forEach((route) => {
   app.use(route, limiter);
 });
 
@@ -62,19 +63,26 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/");
   },
-  filename: function (req, file, cb) {
+  filename: async function (req, file, cb) {
+    const { username } = req.body;
+    const user = await User.findOne({ username: username });
+    if(user.image){
+      fs.unlinkSync(`public/${user.image}`);
+    }
+    const hash = crypto.createHash('sha256');
+    hash.update(username);
+    req.userId = hash.digest('hex');
     cb(
       null,
       file.fieldname +
         "-" +
-        req.body.username +
+        req.userId +
         path.extname(file.originalname),
     );
   },
 });
 
 const upload = multer({ storage });
-
 app.post("/avatarUpload", upload.single("avatar"), async (req, res) => {
   try {
     const { username } = req.body;
@@ -91,6 +99,22 @@ app.post("/avatarUpload", upload.single("avatar"), async (req, res) => {
     });
   } catch (error) {
     console.error("Error uploading avatar", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/getAvatar/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+    await User.findOne({ username: username }).then((user) => {
+      if (user) {
+        res.status(200).json({ avatarUrl: user.image });
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    });
+  } catch (error) {
+    console.error("Error getting avatar", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
