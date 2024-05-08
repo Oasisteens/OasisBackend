@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
 const User = require("./models/user");
-const bcrypt = require("bcryptjs");
+const crypto = require('crypto');
 const multer = require("multer");
 const Like = require("./models/like");
 const Comment = require("./models/comment");
@@ -65,7 +65,13 @@ const storage = multer.diskStorage({
   },
   filename: async function (req, file, cb) {
     const { username } = req.body;
-    req.userId = await bcrypt.hash(username, 10);
+    const user = await User.findOne({ username: username });
+    if(user.image){
+      fs.unlinkSync(`public/${user.image}`);
+    }
+    const hash = crypto.createHash('sha256');
+    hash.update(username);
+    req.userId = hash.digest('hex');
     cb(
       null,
       file.fieldname +
@@ -82,9 +88,6 @@ app.post("/avatarUpload", upload.single("avatar"), async (req, res) => {
     const { username } = req.body;
     await User.findOne({ username: username }).then((user) => {
       if (user) {
-        if(user.image){
-          fs.unlinkSync(`public/${user.image}`);
-        }
         user.image = req.file.filename;
         user.save();
         res
