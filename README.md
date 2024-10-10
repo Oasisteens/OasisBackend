@@ -1,3 +1,5 @@
+# This backend server is no longer in use, the backend functions are integrated into the repo Oasisforum
+
 # OasisBackend
 
 This is the backend repository for OasisForum, a forum website. The backend is built with Express.js and handles form submission logic among other things.
